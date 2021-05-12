@@ -22,9 +22,25 @@ public class AddService {
         return numbers.split(delimiter);
     }
 
-    public String[] checkIfNegativeNumbers(){
-
-        return new String[0];
+    public String checkIfNegativeNumbers(String[] tableOfNumbers){
+        int current;
+        boolean isNegative = false;
+        StringBuilder builder = new StringBuilder("negatives not allowed: ");
+        for(String number : tableOfNumbers){
+             current = Integer.parseInt(number);
+            if(current < 0)
+            {
+                builder.append(current).append(", ");
+                isNegative = true;
+            }
+        }
+        if(isNegative) {
+            builder.deleteCharAt(builder.length()-2);
+            return builder.toString();
+        }
+        else{
+            return null;
+        }
     }
 
     public int calculate(String[] tableOfNumbers){

@@ -23,6 +23,13 @@ public class AddController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Nowa linia w niedozwolonym miejscu.");
         }
 
+        String negativeNumbers = addService.checkIfNegativeNumbers(tableOfNumbers);
+        if(negativeNumbers != null)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(negativeNumbers);
+        }
+
+
         int result = addService.calculate(tableOfNumbers);
 
         return ResponseEntity.ok(result);
