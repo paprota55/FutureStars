@@ -12,11 +12,14 @@ public class AddService {
                 return null;
             }
 
+            if(!Character.isDigit(numbers.charAt(0)) && numbers.charAt(1) == '\r'){
+                delimiter = Character.toString(numbers.charAt(0));
+                numbers = numbers.substring(1);
+            }
+
             numbers = numbers.replace("\n","").replace("\r","");
 
-            String[] tableOfNumbers = numbers.split(delimiter);
-
-        return tableOfNumbers;
+        return numbers.split(delimiter);
     }
 
     public String[] checkIfNegativeNumbers(){
@@ -26,8 +29,13 @@ public class AddService {
 
     public int calculate(String[] tableOfNumbers){
         int sum = 0;
+        int current;
         for(String number : tableOfNumbers){
-            sum += Integer.parseInt(number);
+            current = Integer.parseInt(number);
+            if(current <=1000)
+            {
+                sum += current;
+            }
         }
         return sum;
     }
