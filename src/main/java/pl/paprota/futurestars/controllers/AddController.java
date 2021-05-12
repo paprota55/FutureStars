@@ -1,12 +1,12 @@
 package pl.paprota.futurestars.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.paprota.futurestars.services.AddService;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 public class AddController {
@@ -14,10 +14,16 @@ public class AddController {
     @Autowired
     private AddService addService;
 
-    @RequestMapping(value = {"/add/{numbers}","/add"})
-    ResponseEntity<?> add(@PathVariable(value = "numbers",required = false) String numbers){
+    @PostMapping(value = {"/add"})
+    ResponseEntity<?> add(@RequestBody String numbers){
 
-        int result = addService.add(numbers);
+        String[] tableOfNumbers = addService.add(numbers);
+
+        if(tableOfNumbers == null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Nowa linia w niedozwolonym miejscu.");
+        }
+
+        int result = addService.calculate(tableOfNumbers);
 
         return ResponseEntity.ok(result);
     }

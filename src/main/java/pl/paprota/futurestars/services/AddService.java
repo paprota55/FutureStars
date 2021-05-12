@@ -4,22 +4,31 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AddService {
-    public int add(String numbers){
-        if(numbers == null){
-            return 0;
-        }
+    public String[] add(String numbers){
 
-        int sum = 0;
         String delimiter = ",";
 
-        if(numbers.length() != 0)
-        {
-            String[] tableOfNumbers = numbers.split(delimiter);
-            for(String current : tableOfNumbers){
-                sum += Integer.parseInt(current);
+            if(numbers.charAt(numbers.length()-1) == '\n'){
+                return null;
             }
-        }
 
+            numbers = numbers.replace("\n","").replace("\r","");
+
+            String[] tableOfNumbers = numbers.split(delimiter);
+
+        return tableOfNumbers;
+    }
+
+    public String[] checkIfNegativeNumbers(){
+
+        return new String[0];
+    }
+
+    public int calculate(String[] tableOfNumbers){
+        int sum = 0;
+        for(String number : tableOfNumbers){
+            sum += Integer.parseInt(number);
+        }
         return sum;
     }
 }
