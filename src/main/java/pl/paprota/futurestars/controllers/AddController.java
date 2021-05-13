@@ -6,33 +6,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.paprota.futurestars.services.AddService;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @RestController
 public class AddController {
 
-    @Autowired
-    private AddService addService;
+    private final AddService addService;
 
-    @PostMapping(value = {"/add"})
+    public AddController(AddService addService) {
+        this.addService = addService;
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     ResponseEntity<?> add(@RequestBody String numbers){
+        try {
 
-        String[] tableOfNumbers = addService.add(numbers);
+            if (!addService.checkEOFCorrectness(numbers)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("End of line in the wrong place.");
+            }
 
-        if(tableOfNumbers == null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Nowa linia w niedozwolonym miejscu.");
+            String[] tableOfNumbers = addService.prepareNumbersAndDelimiter(numbers);
+
+            String negativeNumbers = addService.checkIfNegativeNumbers(tableOfNumbers);
+            if (negativeNumbers != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(negativeNumbers);
+            }
+
+            int result = addService.calculate(tableOfNumbers);
+
+            return ResponseEntity.ok(addService.updateDataInDataBase(result));
         }
-
-        String negativeNumbers = addService.checkIfNegativeNumbers(tableOfNumbers);
-        if(negativeNumbers != null)
+        catch (NumberFormatException e)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(negativeNumbers);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You entered the wrong delimiter in your query");
         }
-
-
-        int result = addService.calculate(tableOfNumbers);
-
-        return ResponseEntity.ok(result);
     }
 
 }
